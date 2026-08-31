@@ -12,11 +12,4 @@ A colourful, dependency-free collection of small browser games, ready for GitHub
 
 Open `index.html` in a modern browser. No build step or package installation is needed.
 
-## Publish with GitHub Pages
-
-1. Create a GitHub repository and upload these files.
-2. Go to **Settings → Pages**.
-3. Choose **Deploy from a branch**, then select `main` and `/ (root)`.
-4. Save; GitHub will show your public site address shortly.
-
 City Trader is original and is not affiliated with or branded as Monopoly.
