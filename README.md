@@ -12,4 +12,6 @@ A colourful, dependency-free collection of small browser games, ready for GitHub
 
 Open `index.html` in a modern browser. No build step or package installation is needed.
 
+Or open https://ignition27.github.io/game-shelf/ to play in your browser!
+
 City Trader is original and is not affiliated with or branded as Monopoly.
