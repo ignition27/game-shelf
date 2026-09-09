@@ -1,5 +1,5 @@
 const {chromium}=require('playwright'),assert=require('node:assert/strict'),fs=require('node:fs'),path=require('node:path');const root=path.resolve(__dirname,'..');
-(async()=>{const browser=await chromium.launch({headless:true}),p=await browser.newPage({viewport:{width:1100,height:1100}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(require('node:url').pathToFileURL(path.join(root,'index.html')).href);await p.clock.install();
+(async()=>{const browser=await chromium.launch({headless:true}),p=await browser.newPage({viewport:{width:1100,height:1100}}),errors=[];p.on('pageerror',e=>errors.push(e.message));await p.goto(require('node:url').pathToFileURL(path.join(root,'index.html')).href);await p.clock.install();await p.clock.pauseAt(new Date());
 const seed=async(n,answer,stats={})=>p.evaluate(({n,answer,stats})=>{localStorage.setItem(`word-vault-${n}`,JSON.stringify({wins:0,played:0,streak:0,best:0,...stats,round:{answer,guesses:[],status:'playing'}}));},{n,answer,stats});
 const guess=async(w)=>{await p.keyboard.type(w);await p.keyboard.press('Enter');await p.clock.runFor(1000);};
 assert.deepEqual(await p.evaluate(()=>gradeVault('ALLEY','APPLE')),['correct','present','absent','present','absent']);assert.deepEqual(await p.evaluate(()=>gradeVault('EERIE','SHEEP')),['present','present','absent','absent','absent']);

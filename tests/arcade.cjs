@@ -5,7 +5,7 @@ const root=path.resolve(__dirname,'..');
 const screenshots=fs.mkdtempSync(path.join(require('node:os').tmpdir(),'game-shelf-tests-'));
 (async()=>{
 const browser=await chromium.launch({headless:true});const page=await browser.newPage({viewport:{width:1100,height:1000}});const errors=[];page.on('pageerror',e=>errors.push(e.message));
-await page.goto(pathToFileURL(path.join(root,'index.html')).href);await page.clock.install();
+await page.goto(pathToFileURL(path.join(root,'index.html')).href);await page.clock.install();await page.clock.pauseAt(new Date());
 await page.evaluate(()=>play('snake'));await page.click('#start-game');await page.keyboard.press('w');await page.clock.runFor(125);await page.keyboard.press('p');assert.equal(await page.textContent('#snake-state'),'PAUSED');await page.clock.runFor(3000);assert.equal(await page.textContent('#snake-state'),'PAUSED');await page.keyboard.press('p');assert.equal(await page.textContent('#snake-state'),'RUNNING');
 await page.selectOption('#snake-mode','wrap');await page.click('#start-game');await page.clock.runFor(6000);assert.equal(await page.textContent('#snake-state'),'RUNNING');
 await page.selectOption('#snake-mode','classic');await page.click('#start-game');await page.clock.runFor(2000);assert.equal(await page.textContent('#snake-state'),'OVER');await page.click('#start-game');assert.equal(await page.textContent('#score'),'00');
