@@ -40,13 +40,14 @@
   function dailySet(day=dayKey()){
     if(!validDay(day))return [];
     const seed=hash('daily-v1:'+day),used=new Set();
-    return POOLS.map((pool,i)=>{const offset=(seed+i*7)%pool.length;let chosen;for(let k=0;k<pool.length;k++){const item=pool[(offset+k)%pool.length];if(!used.has(item.game)){chosen=item;break;}}used.add(chosen.game);return {...chosen,category:['Quick win','Skill test','The finish line'][i]};});
+    const pools=POOLS.map(p=>p.slice());if(day>='2026-09-10'){pools[0].push({id:'camp-fifty',game:'clicker',title:'A helping hand',description:'Gather coins 50 times in one camp visit today.',kind:'taps',target:50});pools[2].push({id:'trail-flag',game:'platform',title:'Take the scenic route',description:'Finish any Mini Platformer level. Replays count.',kind:'platform',target:1});}
+    return pools.map((pool,i)=>{const offset=(seed+i*7)%pool.length;let chosen;for(let k=0;k<pool.length;k++){const item=pool[(offset+k)%pool.length];if(!used.has(item.game)){chosen=item;break;}}used.add(chosen.game);return {...chosen,category:['Quick win','Skill test','The finish line'][i]};});
   }
   const fresh=()=>({version:1,days:{},cup:null,soloBest:0});
   let saved=fresh(),storageOK=true,launching=null;
   function metrics(game,data){
     if(!object(data))return null;
-    const fields={snake:{score:400},dodger:{score:1000000},flappy:{score:1000000},memory:{pairs:8,moves:1000000},golf:{total:60,holed:6,holes:6},word:{guesses:6},reaction:{ms:60000}}[game];
+    const fields={snake:{score:400},dodger:{score:1000000},flappy:{score:1000000},memory:{pairs:8,moves:1000000},golf:{total:60,holed:6,holes:6},word:{guesses:6},reaction:{ms:60000},clicker:{taps:1000000},platform:{level:12,stars:3}}[game];
     if(!fields)return null;
     const result={};for(const [key,max] of Object.entries(fields))if(Object.hasOwn(data,key)){if(!integer(data[key],0,max))return null;result[key]=data[key];}
     if(!Object.keys(result).length)return null;
@@ -55,6 +56,7 @@
     result.complete=data.complete===true;
     if(game==='memory')result.complete=result.complete&&result.pairs===8&&result.moves>=8;
     if(game==='golf')result.complete=result.complete&&result.holed===result.holes&&result.total>=result.holed;
+    if(game==='platform')result.complete=result.complete&&result.level>=1;
     if(game==='word')result.complete=result.complete&&result.guesses>=1;
     return result;
   }
@@ -98,10 +100,12 @@
     if(goal.game!==run.game)return 0;
     if(goal.kind==='snake')return ['classic-125-1','wrap-125-1'].includes(run.rule)?m.score||0:0;
     if(goal.kind==='score')return m.score||0;
+    if(goal.kind==='taps')return run.rule==='camp'?m.taps||0:0;
     if(goal.kind==='pairs')return m.pairs||0;
     if(goal.kind==='reaction')return m.ms>0&&m.ms<=350?1:0;
     if(goal.kind==='hole')return m.holed>0?1:0;
     if(!done||!m.complete)return 0;
+    if(goal.kind==='platform')return run.rule==='trail'&&m.level>=1?1:0;
     if(goal.kind==='word')return run.rule==='word-5'&&m.guesses<=4?1:0;
     if(goal.kind==='memory')return m.moves<=20?1:0;
     if(goal.kind==='golf')return run.rule==='golf-six'&&m.holed===6&&m.total<=30?1:0;
@@ -113,7 +117,7 @@
     if(JSON.stringify(progress)!==before){saved.days[run.day]=progress;save();syncRewards();}
   }
   const storageNote=()=>storageOK?'Saved on this browser.':'Storage unavailable: progress lasts for this visit only.';
-  function dailyCards(day){const progress=saved.days[day]||{};return dailySet(day).map(g=>{const n=progress[g.id]||0,done=n>=g.target;return `<article class="daily-card ${done?'is-complete':''}"><div class="event-card-top"><span class="eyebrow">${g.category}</span><span>${done?'✓ Complete':`${n} / ${g.target}`}</span></div><span class="daily-icon" aria-hidden="true">${GAMES[g.game]?.icon||{reaction:'⚡',word:'🔤'}[g.game]}</span><h2>${g.title}</h2><p>${g.description}</p><progress max="${g.target}" value="${n}" aria-label="${g.title}: ${n} of ${g.target}"></progress><button class="action" data-daily-play="${g.game}">${done?'Play again':'Play challenge'} →</button></article>`;}).join('');}
+  function dailyCards(day){const progress=saved.days[day]||{};return dailySet(day).map(g=>{const n=progress[g.id]||0,done=n>=g.target;return `<article class="daily-card ${done?'is-complete':''}"><div class="event-card-top"><span class="eyebrow">${g.category}</span><span>${done?'✓ Complete':`${n} / ${g.target}`}</span></div><span class="daily-icon" aria-hidden="true">${GAMES[g.game]?.icon||{reaction:'⚡',word:'🔤',clicker:'🪙',platform:'🚩'}[g.game]}</span><h2>${g.title}</h2><p>${g.description}</p><progress max="${g.target}" value="${n}" aria-label="${g.title}: ${n} of ${g.target}"></progress><button class="action" data-daily-play="${g.game}">${done?'Play again':'Play challenge'} →</button></article>`;}).join('');}
   function dailyRender(){
     syncDays();syncRewards();const day=dayKey(),badges=completeDays(),done=dailySet(day).filter(g=>(saved.days[day]?.[g.id]||0)>=g.target).length;
     shell('Daily Challenges','Three fresh goals. One little reason to play today.',`<section class="events-page"><div class="event-banner daily-banner"><div><span class="eyebrow">${day} · BRISBANE TIME</span><h2>${done===3?'Today’s badge is yours.':'Make today a triple.'}</h2><p>${done} of 3 complete · <span id="daily-countdown"></span></p></div><span class="event-emblem" aria-hidden="true">${done===3?'🏅':'☀️'}</span></div><div class="daily-grid">${dailyCards(day)}</div><p class="event-save-note">${storageNote()} Resets at midnight Brisbane time. A round crossing midnight counts towards the day it started.</p><section class="event-panel"><span class="eyebrow">YOUR DAILY COLLECTION</span><h2>${badges.length} daily badge${badges.length===1?'':'s'} earned</h2><p>Complete all three goals to earn a dated badge. Any days count; there is no streak to lose.</p><div class="daily-milestones">${[[3,'Daybreak theme'],[7,'Mint ribbon snake'],[14,'Twilight golf ball']].map(([n,label])=>`<div class="${badges.length>=n?'reached':''}"><b>${badges.length>=n?'✓':Math.min(badges.length,n)+' / '+n}</b><span>${label}<small>${n} daily sets</small></span></div>`).join('')}</div><button class="event-link" onclick="Shelf.render()">Choose your cosmetics →</button>${badges.length?`<p>Most recent badges</p><div class="daily-badges" aria-label="Recent earned daily badges">${badges.slice(-14).reverse().map(d=>`<span title="All three challenges completed on ${d}">🏅 ${d}</span>`).join('')}</div>`:''}</section></section>`);
