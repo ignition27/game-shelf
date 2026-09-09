@@ -1,7 +1,7 @@
 // Run every browser suite and report all failures, so one failure cannot hide another.
 const {spawnSync}=require('node:child_process');
 const path=require('node:path');
-const suites=['arcade','shooter','vault','rewards','golf','integration','cosmetics','daily','cup'];
+const suites=['arcade','shooter','vault','rewards','golf','integration','cosmetics','daily','cup','adventures'];
 const failed=[];
 for(const suite of suites){
   console.log(`\nTesting ${suite}…`);

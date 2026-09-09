@@ -132,6 +132,14 @@ Previously Word Guess, now a retro terminal puzzle with animated clue tiles and 
 - Starting a new vault after submitting a guess counts an unfinished puzzle as a loss and ends that length's streak.
 - Curated answers are checked against an offline British/American English guess dictionary. Colour clues also have symbols, and tile animations respect reduced-motion preferences.
 
+## Clicker Adventure and Mini Platformer
+
+- Clicker Adventure now has a growing expedition camp, tap upgrades, helpers, four journal quests and travelling merchant gifts. Discover the forest, crystal caverns and floating ruins; expeditions cost coins and return with treasure after 30, 60 or 90 seconds.
+- Helpers earn 1–3 coins per second each, depending on the destination unlocked. Camp progress saves automatically. Away earnings are capped at four hours and shown when you return; completed expeditions are credited once. A confirmed reset clears only the camp.
+- Mini Platformer has twelve courses in three worlds, with optional stars, springs, moving and crumbling platforms, enemies and pits. Use arrows or A/D to move and Space/W/Up to jump; holding jump gives extra height. Touch buttons are also available.
+- Checkpoints and collected stars survive retries within the current attempt. Completed levels, collected stars and best times persist between visits. Replays can improve stars and times. Pause with P/Escape or the button; changing tabs or losing focus pauses automatically.
+- The existing tap-power and flag achievements remain connected. From 10 September 2026, the daily rotation can also include 50 camp taps or completing a platformer level. Earlier dated daily sets retain their original goals.
+
 ## Saved progress
 
 The reworked games and Trophy room use browser local storage for scores, puzzle progress, achievements, and equipped cosmetics. Saves belong to the browser and site where you play; clearing site data removes them. When storage is unavailable, the games remain playable, but progress cannot be saved between visits.
@@ -151,12 +159,13 @@ node tests/run.cjs
 | `tests/integration.cjs` | Actual existing-game actions award the expected trophies; no premature, duplicate, bot, or abandoned-round awards; equipped arcade artwork and reload persistence. |
 | `tests/cosmetics.cjs` | All cosmetic palettes appear in canvas pixels; themes differ; navigation, equipment persistence, and home/trophy/golf layouts at 320, 375, 768, and 1100 px. |
 | `tests/daily.cjs` | Every daily goal, year-long deterministic rotation, Brisbane midnight, cross-midnight and restored attempts, exact thresholds, 3/7/14-day rewards, duplicate prevention, storage fallback, and mobile layouts. |
+| `tests/adventures.cjs` | Camp purchases, quests, three expeditions, capped offline earnings, saves; all twelve level playthroughs, stars, checkpoints, jump physics, springs, moving/crumbling platforms, enemies, controls, daily goals, mobile layouts and storage failure. |
 | `tests/cup.cjs` | Solo and 2–4 player setup, scoring/medal boundaries, five actual game adapters, identical layouts, complete tournaments and ties, timers, pauses, reloads, duplicate protection, cross-tab saves, storage fallback, and mobile layouts. |
 | `tests/arcade.cjs` | Snake modes, growth, repeated turns, collision edge cases, full-board completion; Sky Flyer gravity, controls, scoring, level transitions, gap sizes; pause/restart, navigation, mobile layout, and basic Checkers/City Trader checks. |
 | `tests/shooter.cjs` | Movement, auto-fire, pickups, damage protection, game over, waves and bosses, pointer controls, pause/restart, cleanup, a 100-second simulation, and mobile layout. |
 | `tests/vault.cjs` | Repeated-letter scoring, dictionary validation, duplicate guesses, typing and on-screen input, all word lengths, win/loss, saved streaks and puzzles, animation input locking, unavailable storage, and responsive layouts. |
 
-The tests check for browser errors and write screenshots to temporary directories printed in their output. The runner executes all nine suites. Deterministic clock controls and test-only instrumentation exercise rare game states without exposing test controls in the shipped games.
+The tests check for browser errors and write screenshots to temporary directories printed in their output. The runner executes all ten suites. Deterministic clock controls and test-only instrumentation exercise rare game states without exposing test controls in the shipped games.
 
 ## Credits and licences
 

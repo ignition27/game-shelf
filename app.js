@@ -1,5 +1,5 @@
 const app=document.querySelector('#app');let clean=()=>{},carIndex=0,carTimer=null;
-const games=[['golf','⛳','Mini Golf','Six holes. Find your perfect line.'],['snake','🐍','Garden Snake','Four ways to eat, grow, and go.'],['dodger','🚀','Space Dodger','Defend Mars. Survive the fleet.'],['memory','🃏','Memory Match','Find every pair.'],['reaction','⚡','Reaction Test','How quick are you?'],['word','🔤','Word Vault','Six attempts. Crack the code.'],['clicker','🪙','Clicker Adventure','Tap, upgrade, grow.'],['flappy','🐦','Sky Flyer','A pixel-plane sunset run.'],['platform','🕹️','Mini Platformer','Jump for the flag.'],['tic','❌','Tic-Tac-Toe','Take on the computer.'],['checkers','♟','Checkers','Three bot difficulties.'],['trade','🏘️','City Trader','Buy streets, beat the bots.']];
+const games=[['golf','⛳','Mini Golf','Six holes. Find your perfect line.'],['snake','🐍','Garden Snake','Four ways to eat, grow, and go.'],['dodger','🚀','Space Dodger','Defend Mars. Survive the fleet.'],['memory','🃏','Memory Match','Find every pair.'],['reaction','⚡','Reaction Test','How quick are you?'],['word','🔤','Word Vault','Six attempts. Crack the code.'],['clicker','🪙','Clicker Adventure','Build a camp. Explore three worlds.'],['flappy','🐦','Sky Flyer','A pixel-plane sunset run.'],['platform','🕹️','Mini Platformer','Twelve levels. Three worlds. Every star.'],['tic','❌','Tic-Tac-Toe','Take on the computer.'],['checkers','♟','Checkers','Three bot difficulties.'],['trade','🏘️','City Trader','Buy streets, beat the bots.']];
 function cards(filter='all'){return games.filter(g=>filter==='all'||(filter==='board'?['checkers','trade'].includes(g[0]):!['checkers','trade'].includes(g[0]))).map(g=>`<article class="card"><div class="art">${g[1]}</div><h3>${g[2]}</h3><p>${g[3]}</p><button onclick="play('${g[0]}')">Play now →</button></article>`).join('')}
 function carousel(){return `<section class="carousel" aria-roledescription="carousel" aria-label="Browse all games"><div class="section-title"><div><span class="eyebrow">Spin the shelf</span><h2>Browse them all</h2></div><div class="car-controls"><button class="car-btn" id="carPrev" aria-label="Previous game">←</button><button class="car-btn" id="carNext" aria-label="Next game">→</button></div></div><div class="car-viewport"><div class="car-track" id="carTrack">${games.map(g=>`<article class="card car-slide"><div class="art">${g[1]}</div><h3>${g[2]}</h3><p>${g[3]}</p><button onclick="play('${g[0]}')">Play now →</button></article>`).join('')}</div></div><div class="car-dots" id="carDots">${games.map((_,i)=>`<button data-i="${i}" class="${i===0?'active':''}" aria-label="Go to slide ${i+1}"></button>`).join('')}</div></section>`}
 function initCarousel(){let track=document.querySelector('#carTrack'),dots=[...document.querySelectorAll('#carDots button')],box=document.querySelector('.carousel'),gap=parseFloat(getComputedStyle(track).columnGap)||15;carIndex=0;let step=()=>track.children[0].getBoundingClientRect().width+gap;let go=i=>{carIndex=(i+games.length)%games.length;track.style.transform=`translateX(-${carIndex*step()}px)`;dots.forEach((d,j)=>d.classList.toggle('active',j===carIndex))};let next=()=>go(carIndex+1);let start=()=>carTimer=setInterval(next,3500);let restart=()=>{clearInterval(carTimer);start()};document.querySelector('#carNext').onclick=()=>{next();restart()};document.querySelector('#carPrev').onclick=()=>{go(carIndex-1);restart()};dots.forEach(d=>d.onclick=()=>{go(+d.dataset.i);restart()});box.onmouseenter=()=>clearInterval(carTimer);box.onmouseleave=start;box.ontouchstart=()=>clearInterval(carTimer);box.ontouchend=start;let onResize=()=>go(carIndex);addEventListener('resize',onResize);start();clean=()=>{clearInterval(carTimer);removeEventListener('resize',onResize)}}
@@ -665,7 +665,7 @@ function trade(){
   }
   render();
 }
-function clicker(){let coins=0,power=1,cost=15;let render=()=>{shell('Clicker Adventure','Tap the coin, buy a better tap, and watch your pile grow.',`<div class="panel"><div class="stats">COINS <b>${coins}</b> · TAP POWER <b>${power}</b></div><button id="coin" style="font-size:100px;border:0;background:transparent">🪙</button><div class="controls"><button id="upgrade">Upgrade tap — ${cost} coins</button><button onclick="clicker()">New game</button></div></div>`);document.querySelector('#coin').onclick=()=>{coins+=power;render()};document.querySelector('#upgrade').onclick=()=>{if(coins>=cost){coins-=cost;power++;Shelf.record('clicker_power',{power});cost=Math.ceil(cost*1.8);render()}}};render()}
+function clicker(){expeditionCamp();}
 function tic(){let b=Array(9).fill(''),note='Your turn',wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]],won=()=>wins.find(x=>x.every(i=>b[i]&&b[i]===b[x[0]]));let render=()=>{shell('Tic-Tac-Toe','You are X. Can you beat the computer?',`<div class="panel"><div class="stats">${note}</div><div class="memory" style="grid-template-columns:repeat(3,1fr);max-width:300px">${b.map((x,i)=>`<button data-t="${i}" style="height:92px">${x}</button>`).join('')}</div><div class="controls"><button onclick="tic()">New game</button></div></div>`);document.querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>move(+x.dataset.t))};let move=i=>{if(b[i]||won())return;b[i]='X';if(won()){note='You win!';Shelf.record('tic_win',{});return render()}if(b.every(Boolean)){note='Draw.';return render()}let open=b.map((x,i)=>x?'':i).filter(x=>x!==''),pick=open.find(i=>{b[i]='O';let yes=!!won();b[i]='';return yes})??open[Math.floor(Math.random()*open.length)];b[pick]='O';note=won()?'Computer wins.':'Your turn';render()};render()}
 function flappy(){
   shell('Sky Flyer','A sunset, a little prop plane, and a sky full of close calls.',`
@@ -770,25 +770,6 @@ function flappy(){
   runSession.mount(()=>crash());
   clean=()=>{runSession.dispose();cancelAnimationFrame(raf);removeEventListener('keydown',keydown);removeEventListener('keyup',keyup);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};reset();raf=requestAnimationFrame(loop);
 }
-function platform(){
-  shell('Mini Platformer','Use left/right and Space. Reach the flag at the far side.',`<div class="panel"><canvas class="canvas" width="480" height="300" aria-label="Platformer: move right to reach the flag"></canvas><p id="platform-note" role="status">The flag is just ahead.</p><div class="controls"><button data-p="left" aria-label="Move left">←</button><button data-p="jump">Jump</button><button data-p="right" aria-label="Move right">→</button><button onclick="platform()">Restart</button></div></div>`);
-  const c=document.querySelector('canvas'),x=c.getContext('2d'),key=new Set(),pointers=new Map();let px=25,y=230,v=0,over=false;
-  const control=k=>({'ArrowLeft':'left','ArrowRight':'right',' ':'jump'}[k]);
-  const down=e=>{const k=control(e.key);if(!k||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('button,input,select,textarea'))return;e.preventDefault();key.add(k);};
-  const up=e=>key.delete(control(e.key));
-  const release=()=>{key.clear();pointers.clear();};
-  const visibility=()=>{if(document.hidden)release();};
-  addEventListener('keydown',down);addEventListener('keyup',up);addEventListener('blur',release);document.addEventListener('visibilitychange',visibility);
-  document.querySelectorAll('[data-p]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);pointers.set(e.pointerId,b.dataset.p);};b.onpointerup=b.onpointercancel=b.onlostpointercapture=e=>pointers.delete(e.pointerId);});
-  const held=k=>key.has(k)||[...pointers.values()].includes(k);
-  const draw=()=>{x.fillStyle='#bdefff';x.fillRect(0,0,480,300);x.fillStyle='#67e2b1';x.fillRect(0,260,480,40);x.fillStyle='#ff5d8f';x.fillRect(450,195,5,65);x.fillStyle='#ffd65c';x.fillRect(455,195,20,14);x.fillStyle='#172036';x.fillRect(px,y,22,30);};
-  const loop=setInterval(()=>{
-    if(over)return;
-    if(held('left'))px-=4;if(held('right'))px+=4;if(held('jump')&&y>=230)v=-10;
-    v+=.55;y=Math.min(230,y+v);px=Math.max(0,Math.min(448,px));draw();
-    if(px>435){over=true;clearInterval(loop);release();document.querySelector('#platform-note').textContent='Level complete! You reached the flag.';Shelf.record('platform_win',{});}
-  },16);
-  clean=()=>{clearInterval(loop);release();removeEventListener('keydown',down);removeEventListener('keyup',up);removeEventListener('blur',release);document.removeEventListener('visibilitychange',visibility);};draw();
-}
+function platform(){trailPlatformer();}
 
 home();

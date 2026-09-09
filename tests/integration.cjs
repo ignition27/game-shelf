@@ -20,6 +20,8 @@ source=`window.qa={};window.qaEvents=[];function qaRecord(type,data){window.qaEv
 (async()=>{
  const browser=await chromium.launch({headless:true});const p=await browser.newPage({viewport:{width:1100,height:1000}});const errors=[],dialogs=[];
  p.on('pageerror',e=>errors.push(e.message));p.on('dialog',async d=>{dialogs.push(d.message());await d.dismiss();});
+ let adventureSource=fs.readFileSync(path.join(root,'adventures.js'),'utf8').replaceAll('Shelf.record(', 'qaRecord(').replace('map();save();raf=requestAnimationFrame(frame);',"map();save();raf=requestAnimationFrame(frame);window.qa.platform={nearFlag:()=>{p.x=1509;p.y=280;}};");
+ await p.route('**/adventures.js',r=>r.fulfill({contentType:'text/javascript',body:adventureSource}));
  await p.route('**/app.js',r=>r.fulfill({contentType:'text/javascript',body:source}));
  await p.goto(url);await p.clock.install();await p.clock.pauseAt(new Date());
  const events=type=>p.evaluate(type=>qaEvents.filter(e=>e.type===type),type);
@@ -66,14 +68,14 @@ source=`window.qa={};window.qaEvents=[];function qaRecord(type,data){window.qaEv
  await p.keyboard.type('apple');await p.keyboard.press('Enter');assert.deepEqual(await events('word_win'),[{type:'word_win',data:{guesses:2}}]);
  await p.evaluate(()=>home());await p.clock.runFor(1000);await play('word');await p.keyboard.press('Enter');assert.equal((await events('word_win')).length,1);
  // Earn upgrades with real UI interactions and reject unaffordable purchases.
- await play('clicker');await resetEvents();await p.locator('#upgrade').click();assert.deepEqual(await events('clicker_power'),[]);
+ await play('clicker');await resetEvents();await p.locator('#upgrade').evaluate(b=>b.click());assert.deepEqual(await events('clicker_power'),[]);
  let power=1,coins=0,cost=15;
  while(power<5){while(coins<cost){await p.locator('#coin').click();coins+=power;}await p.locator('#upgrade').click();coins-=cost;power++;cost=Math.ceil(cost*1.8);assert.equal((await events('clicker_power')).at(-1).data.power,power);}
  assert.equal((await events('clicker_power')).length,4);assert.equal((await events('game_play')).length,0,'Purchases re-render without counting extra visits');
  await play('flappy');await resetEvents();await p.evaluate(()=>{qa.flappy.reset(true);qa.flappy.set({score:9,y:200,pipes:[{x:55,g:140,gap:132,passed:false}]});qa.flappy.update(0);qa.flappy.update(0);});
  assert.deepEqual(await events('flyer_score'),[{type:'flyer_score',data:{score:10}}]);
- await play('platform');await resetEvents();await p.keyboard.down('ArrowRight');await p.clock.runFor(1900);await p.keyboard.up('ArrowRight');assert.deepEqual(await events('platform_win'),[{type:'platform_win',data:{}}]);
- await p.clock.runFor(1000);assert.equal((await events('platform_win')).length,1);await play('platform');await resetEvents();await p.keyboard.down('ArrowRight');await p.clock.runFor(100);await p.evaluate(()=>home());await p.clock.runFor(3000);await p.keyboard.up('ArrowRight');assert.deepEqual(await events('platform_win'),[]);
+ await play('platform');await p.locator('[data-level="0"]').click();await p.evaluate(()=>qa.platform.nearFlag());await resetEvents();await p.keyboard.down('ArrowRight');await p.clock.runFor(100);await p.keyboard.up('ArrowRight');assert.deepEqual(await events('platform_win'),[{type:'platform_win',data:{}}]);
+ await p.clock.runFor(1000);assert.equal((await events('platform_win')).length,1);await play('platform');await p.locator('[data-level="0"]').click();await resetEvents();await p.keyboard.down('ArrowRight');await p.clock.runFor(100);await p.evaluate(()=>home());await p.clock.runFor(3000);await p.keyboard.up('ArrowRight');assert.deepEqual(await events('platform_win'),[]);
  await p.evaluate(()=>{Math.random=()=>0;play('tic');qaEvents=[]});
  for(const i of [0,4])await p.locator(`[data-t="${i}"]`).click();assert.deepEqual(await events('tic_win'),[]);
  await p.locator('[data-t="8"]').click();assert.deepEqual(await events('tic_win'),[{type:'tic_win',data:{}}]);await p.locator('[data-t="7"]').click();assert.equal((await events('tic_win')).length,1);
