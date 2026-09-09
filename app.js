@@ -1,12 +1,12 @@
 const app=document.querySelector('#app');let clean=()=>{},carIndex=0,carTimer=null;
-const games=[['snake','🐍','Garden Snake','Four ways to eat, grow, and go.'],['dodger','🚀','Space Dodger','Defend Mars. Survive the fleet.'],['memory','🃏','Memory Match','Find every pair.'],['reaction','⚡','Reaction Test','How quick are you?'],['word','🔤','Word Vault','Six attempts. Crack the code.'],['clicker','🪙','Clicker Adventure','Tap, upgrade, grow.'],['flappy','🐦','Sky Flyer','A pixel-plane sunset run.'],['platform','🕹️','Mini Platformer','Jump for the flag.'],['tic','❌','Tic-Tac-Toe','Take on the computer.'],['checkers','♟','Checkers','Three bot difficulties.'],['trade','🏘️','City Trader','Buy streets, beat the bots.']];
+const games=[['golf','⛳','Mini Golf','Six holes. Find your perfect line.'],['snake','🐍','Garden Snake','Four ways to eat, grow, and go.'],['dodger','🚀','Space Dodger','Defend Mars. Survive the fleet.'],['memory','🃏','Memory Match','Find every pair.'],['reaction','⚡','Reaction Test','How quick are you?'],['word','🔤','Word Vault','Six attempts. Crack the code.'],['clicker','🪙','Clicker Adventure','Tap, upgrade, grow.'],['flappy','🐦','Sky Flyer','A pixel-plane sunset run.'],['platform','🕹️','Mini Platformer','Jump for the flag.'],['tic','❌','Tic-Tac-Toe','Take on the computer.'],['checkers','♟','Checkers','Three bot difficulties.'],['trade','🏘️','City Trader','Buy streets, beat the bots.']];
 function cards(filter='all'){return games.filter(g=>filter==='all'||(filter==='board'?['checkers','trade'].includes(g[0]):!['checkers','trade'].includes(g[0]))).map(g=>`<article class="card"><div class="art">${g[1]}</div><h3>${g[2]}</h3><p>${g[3]}</p><button onclick="play('${g[0]}')">Play now →</button></article>`).join('')}
 function carousel(){return `<section class="carousel" aria-roledescription="carousel" aria-label="Browse all games"><div class="section-title"><div><span class="eyebrow">Spin the shelf</span><h2>Browse them all</h2></div><div class="car-controls"><button class="car-btn" id="carPrev" aria-label="Previous game">←</button><button class="car-btn" id="carNext" aria-label="Next game">→</button></div></div><div class="car-viewport"><div class="car-track" id="carTrack">${games.map(g=>`<article class="card car-slide"><div class="art">${g[1]}</div><h3>${g[2]}</h3><p>${g[3]}</p><button onclick="play('${g[0]}')">Play now →</button></article>`).join('')}</div></div><div class="car-dots" id="carDots">${games.map((_,i)=>`<button data-i="${i}" class="${i===0?'active':''}" aria-label="Go to slide ${i+1}"></button>`).join('')}</div></section>`}
 function initCarousel(){let track=document.querySelector('#carTrack'),dots=[...document.querySelectorAll('#carDots button')],box=document.querySelector('.carousel'),gap=parseFloat(getComputedStyle(track).columnGap)||15;carIndex=0;let step=()=>track.children[0].getBoundingClientRect().width+gap;let go=i=>{carIndex=(i+games.length)%games.length;track.style.transform=`translateX(-${carIndex*step()}px)`;dots.forEach((d,j)=>d.classList.toggle('active',j===carIndex))};let next=()=>go(carIndex+1);let start=()=>carTimer=setInterval(next,3500);let restart=()=>{clearInterval(carTimer);start()};document.querySelector('#carNext').onclick=()=>{next();restart()};document.querySelector('#carPrev').onclick=()=>{go(carIndex-1);restart()};dots.forEach(d=>d.onclick=()=>{go(+d.dataset.i);restart()});box.onmouseenter=()=>clearInterval(carTimer);box.onmouseleave=start;box.ontouchstart=()=>clearInterval(carTimer);box.ontouchend=start;let onResize=()=>go(carIndex);addEventListener('resize',onResize);start();clean=()=>{clearInterval(carTimer);removeEventListener('resize',onResize)}}
-function home(){clean();app.innerHTML=`<section class="hero"><div><span class="eyebrow">A little collection of browser games</span><h1>Pick a game.<br><em>Make a moment.</em></h1><p>Seven small games for a quick break, from arcade classics to thoughtful board games with computer opponents.</p></div><aside class="feature"><span class="kicker">Featured board game</span><b>City Trader</b><p>Build a property empire against 1–3 computer opponents of your choice.</p><button onclick="play('trade')">Play City Trader →</button></aside></section>${carousel()}<div class="section-title"><div><span class="eyebrow">The full shelf</span><h2>Choose your challenge</h2></div></div><section class="grid">${cards()}</section>`;initCarousel()}
-function list(view){clean();let t=view==='board'?'Board games':'Arcade games';app.innerHTML=`<div class="game-head"><button class="back" onclick="home()">←</button><h1>${t}</h1></div><section class="grid">${cards(view)}</section>`}
-function shell(title,sub,body){clean();app.innerHTML=`<div class="game-head"><button class="back" onclick="home()">←</button><div><span class="eyebrow">Game shelf</span><h1>${title}</h1></div></div><div class="game-wrap"><p>${sub}</p>${body}</div>`}
-window.play=id=>({snake,dodger,memory,reaction,word,clicker,flappy,platform,tic,checkers,trade})[id]();window.home=home;document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>b.dataset.view==='home'?home():list(b.dataset.view));
+function home(){clean();app.innerHTML=`<section class="hero"><div><span class="eyebrow">A little collection of browser games</span><h1>Pick a game.<br><em>Make a moment.</em></h1><p>Twelve games for a quick break. Chase high scores, collect trophies, and make the shelf your own.</p></div><aside class="feature"><span class="kicker">New on the shelf</span><b>Mini Golf ⛳</b><p>Six little greens. Banks, bunkers, and a perfect putt waiting to happen.</p><button onclick="play('golf')">Play Mini Golf →</button></aside></section>${DailyChallenges.homeSummary()}${Shelf.summary()}${carousel()}<div class="section-title"><div><span class="eyebrow">The full shelf</span><h2>Choose your challenge</h2></div></div><section class="grid">${cards()}</section>`;initCarousel()}
+function list(view){clean();clean=()=>{};let t=view==='board'?'Board games':'Arcade games';app.innerHTML=`<div class="game-head"><button class="back" onclick="home()">←</button><h1>${t}</h1></div><section class="grid">${cards(view)}</section>`}
+function shell(title,sub,body){clean();clean=()=>{};app.innerHTML=`<div class="game-head"><button class="back" onclick="home()">←</button><div><span class="eyebrow">Game shelf</span><h1>${title}</h1></div></div><div class="game-wrap"><p>${sub}</p>${body}</div>`}
+window.play=id=>{const game={golf,snake,dodger,memory,reaction,word,clicker,flappy,platform,tic,checkers,trade}[id];if(typeof game!=='function')return;game();Shelf.record('game_play',{id});};window.home=home;document.querySelectorAll('nav button').forEach(b=>b.onclick=()=>b.dataset.view==='home'?home():b.dataset.view==='rewards'?Shelf.render():b.dataset.view==='daily'?DailyChallenges.render():b.dataset.view==='cup'?ArcadeCup.render():list(b.dataset.view));
 // Scores are optional: games still work when browser storage is unavailable.
 function arcadeBest(key, score=0){
   try { const best=Math.max(Number(localStorage.getItem(key))||0,score); localStorage.setItem(key,best); return best; }
@@ -30,6 +30,7 @@ function snake(){
       <p class="arcade-footnote">WASD or arrow keys · P to pause · settings start a fresh round</p>
     </div>`);
   const $=s=>document.querySelector(s), c=$('canvas'),x=c.getContext('2d');
+  const runSession=GameRuns.session('snake');
   const mode=$('#snake-mode'),speed=$('#snake-speed'),count=$('#snake-food');
   const descriptions={classic:'The original recipe. Avoid the edges and your own tail.',wrap:'No borders. Leave one edge and emerge on the opposite side.',maze:'Take the scenic route. Garden hedges block your path.',feast:'An all-you-can-eat garden: eight apples on the board.'};
   let body,dir,queue,foods,walls,score,state='ready',timer=null;
@@ -41,7 +42,7 @@ function snake(){
       const p=[x,y]; if(!body.some(b=>equal(b,p))&&!walls.some(b=>equal(b,p))&&!foods.some(b=>equal(b,p)))free.push(p);
     }
     const target=mode.value==='feast'?8:Number(count.value);
-    while(foods.length<target&&free.length)foods.push(free.splice(Math.floor(Math.random()*free.length),1)[0]);
+    while(foods.length<target&&free.length)foods.push(free.splice(Math.floor(runSession.random()*free.length),1)[0]);
     return foods.length>0;
   }
   function hud(){ $('#score').textContent=String(score).padStart(2,'0'); $('#best').textContent=String(arcadeBest(bestKey(),score)).padStart(2,'0'); $('#snake-state').textContent=state.toUpperCase(); $('#pause-game').disabled=state==='ready'||state==='over'; $('#pause-game').textContent=state==='paused'?'Resume':'Pause'; }
@@ -50,16 +51,17 @@ function snake(){
     for(let row=0;row<20;row++)for(let col=0;col<20;col++){x.fillStyle=(row+col)%2?'#c8dea2':'#d1e5af';x.fillRect(col*24,row*24,24,24);}
     walls.forEach(([a,b])=>{x.fillStyle='#426345';x.fillRect(a*24+1,b*24+1,22,22);x.fillStyle='#658653';x.fillRect(a*24+4,b*24+3,13,5);});
     foods.forEach(([a,b])=>{const px=a*24,py=b*24;x.fillStyle='#a53f39';x.beginPath();x.arc(px+12,py+14,8,0,Math.PI*2);x.fill();x.fillStyle='#ef6950';x.beginPath();x.arc(px+10,py+12,6,0,Math.PI*2);x.fill();x.fillStyle='#416148';x.fillRect(px+11,py+2,3,6);x.fillRect(px+14,py+3,5,3);x.fillStyle='#ffd8a1';x.fillRect(px+7,py+9,3,3);});
-    body.slice().reverse().forEach(([a,b],index)=>{x.fillStyle=index===body.length-1?'#244f47':'#397665';x.beginPath();x.roundRect(a*24+1,b*24+1,22,22,7);x.fill();});
+    const skin=Shelf.palette('snake');
+    body.slice().reverse().forEach(([a,b],index)=>{x.fillStyle=index===body.length-1?skin.accent:skin.main;x.beginPath();x.roundRect(a*24+1,b*24+1,22,22,7);x.fill();});
     const [a,b]=body[0],dx=dir[0],dy=dir[1];
     for(const side of [-1,1]){const ex=a*24+12+dx*5+dy*side*5,ey=b*24+12+dy*5+dx*side*5;x.fillStyle='#fff9db';x.fillRect(ex-3,ey-3,6,6);x.fillStyle='#153b36';x.fillRect(ex-1+dx,ey-1+dy,3,3);}
   }
   function reset(start=false){
-    clearInterval(timer);body=[[8,10],[7,10],[6,10]];dir=[1,0];queue=[];foods=[];walls=[];score=0;state='ready';
+    runSession.reset();clearInterval(timer);body=[[8,10],[7,10],[6,10]];dir=[1,0];queue=[];foods=[];walls=[];score=0;state='ready';
     if(mode.value==='maze')for(const row of [5,14])for(let col=4;col<16;col++)if(col!==9&&col!==10)walls.push([col,row]);
-    count.disabled=mode.value==='feast';$('#mode-note').textContent=descriptions[mode.value];fillFood();hud();draw();overlay('A little room to grow.','Pick your rules, then head into the garden.','Start growing →');if(start)run();
+    count.disabled=runSession.cup||mode.value==='feast';$('#mode-note').textContent=descriptions[mode.value];fillFood();hud();draw();overlay('A little room to grow.','Pick your rules, then head into the garden.','Start growing →');if(start)run();
   }
-  function finish(won=false){state='over';clearInterval(timer);hud();overlay(won?'Garden complete!':'That’s a wrap.',`${score} apples collected. ${won?'You filled the garden!':'A fresh round is one click away.'}`,'Play again →');}
+  function finish(won=false){if(state==='over')return;state='over';clearInterval(timer);hud();overlay(won?'Garden complete!':'That’s a wrap.',`${score} apples collected. ${won?'You filled the garden!':'A fresh round is one click away.'}`,runSession.cup?'See Cup standings →':'Play again →');runSession.finish({score,complete:won});}
   function tick(){
     if(state!=='running')return;
     if(queue.length)dir=queue.shift();
@@ -68,11 +70,11 @@ function snake(){
     const foodIndex=foods.findIndex(f=>equal(f,head)),growing=foodIndex>=0;
     // The tail moves away on non-eating turns and is safe to enter.
     if(head.some(n=>n<0||n>=20)||walls.some(w=>equal(w,head))||(growing?body:body.slice(0,-1)).some(b=>equal(b,head)))return finish();
-    body.unshift(head);if(growing){foods.splice(foodIndex,1);score++;}else body.pop();
+    body.unshift(head);if(growing){foods.splice(foodIndex,1);score++;Shelf.record('snake_score',{score});runSession.progress({score});}else body.pop();
     const hasFood=fillFood();draw();hud();if(!hasFood)finish(true);
   }
-  function run(){if(state==='over')return reset(true);state='running';$('#game-overlay').hidden=true;hud();clearInterval(timer);timer=setInterval(tick,Number(speed.value));}
-  function pause(){if(state==='running'){state='paused';clearInterval(timer);hud();overlay('Take a breather.','Your garden will be right here.','Keep growing →');}else if(state==='paused')run();}
+  function run(){if(state==='over')return runSession.cup?ArcadeCup.render():reset(true);runSession.start(`${mode.value}-${speed.value}-${count.value}`);state='running';$('#game-overlay').hidden=true;hud();clearInterval(timer);timer=setInterval(tick,Number(speed.value));}
+  function pause(){if(state==='running'){state='paused';runSession.pause();clearInterval(timer);hud();overlay('Take a breather.','Your garden will be right here.','Keep growing →');}else if(state==='paused')run();}
   function steer(key){
     const direction={w:[0,-1],a:[-1,0],s:[0,1],d:[1,0],ArrowUp:[0,-1],ArrowLeft:[-1,0],ArrowDown:[0,1],ArrowRight:[1,0]}[key];
     if(!direction||state==='over'||state==='paused')return;
@@ -84,9 +86,10 @@ function snake(){
   const blur=()=>{if(state==='running')pause();};const visibility=()=>{if(document.hidden)blur();};
   addEventListener('keydown',keydown);addEventListener('blur',blur);document.addEventListener('visibilitychange',visibility);
   document.querySelectorAll('[data-direction]').forEach(b=>b.onclick=()=>{steer(b.dataset.direction);b.blur();});
-  $('#start-game').onclick=()=>{run();$('#start-game').blur();};$('#pause-game').onclick=()=>{pause();$('#pause-game').blur();};$('#restart-game').onclick=()=>{reset(true);$('#restart-game').blur();};
+  $('#start-game').onclick=()=>{$('#start-game').blur();run();};$('#pause-game').onclick=()=>{pause();$('#pause-game').blur();};$('#restart-game').onclick=()=>{reset(true);$('#restart-game').blur();};
   [mode,speed,count].forEach(el=>el.onchange=()=>{reset();el.blur();});
-  clean=()=>{clearInterval(timer);removeEventListener('keydown',keydown);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};reset();
+  if(runSession.cup){mode.value='wrap';speed.value='125';count.value='1';}runSession.mount(()=>finish());
+  clean=()=>{runSession.dispose();clearInterval(timer);removeEventListener('keydown',keydown);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};reset();
 }
 function dodger(){
   shell('Space Dodger','Mars perimeter · hold the line against an incoming fleet.',`
@@ -102,6 +105,7 @@ function dodger(){
       <p class="arcade-footnote">WASD / arrows · auto-fire · P to pause<br>Touch: drag the ship or hold direction buttons · U upgrade / + repair</p>
     </div>`);
   const $=s=>document.querySelector(s),c=$('canvas'),x=c.getContext('2d');x.imageSmoothingEnabled=false;
+  const runSession=GameRuns.session('dodger');
   const keys=new Set(),pointers=new Map();let drag=null,raf,last=0,state='ready',ship,enemies,shots,hostile,pickups,particles,boss;
   let wave,score,kills,spawned,spawnTimer,fireTimer,elapsed,breakTimer,noticeTimer;
   const rect=(color,a,b,w,h)=>{x.fillStyle=color;x.fillRect(Math.round(a),Math.round(b),w,h);};
@@ -109,6 +113,7 @@ function dodger(){
   const quota=()=>6+Math.min(wave*2,20);
   function message(text){$('#mission-note').textContent=text;noticeTimer=3;}
   function hud(){
+    runSession.progress({score});
     $('#score').textContent=String(score).padStart(4,'0');$('#best').textContent=String(arcadeBest('space-dodger-mars',score)).padStart(4,'0');
     $('#shooter-state').textContent=state.toUpperCase();$('#wave-label').textContent=`WAVE ${String(wave).padStart(2,'0')}${wave%5===0?' / BOSS':''}`;
     $('#hull-label').textContent=`HULL ${'●'.repeat(ship.hp)}${'○'.repeat(3-ship.hp)}`;$('#weapon-label').textContent=['SINGLE SHOT','TWIN SHOT','TRIPLE SHOT'][ship.weapon-1];
@@ -124,16 +129,16 @@ function dodger(){
     hud();
   }
   function reset(start=false){
-    ship={x:320,y:400,r:12,hp:3,weapon:1,inv:0};enemies=[];shots=[];hostile=[];pickups=[];particles=[];boss=null;
+    runSession.reset();ship={x:320,y:400,r:12,hp:3,weapon:1,inv:0};enemies=[];shots=[];hostile=[];pickups=[];particles=[];boss=null;
     wave=1;score=0;kills=0;spawned=0;spawnTimer=.8;fireTimer=0;elapsed=0;breakTimer=0;noticeTimer=0;keys.clear();pointers.clear();drag=null;state='ready';hud();draw();
     message('Flight clearance granted. Ready when you are.');overlay('Defend the red planet.','Move with WASD. Auto-fire is on. Collect upgrades. Boss every five waves.','Launch fighter →');if(start)run();
   }
-  function run(){if(state==='over')return reset(true);if(state==='ready')startWave();state='running';last=0;$('#game-overlay').hidden=true;hud();}
-  function pause(){keys.clear();pointers.clear();drag=null;if(state==='running'){state='paused';hud();overlay('Orbit on hold.','Take a breather, pilot.','Resume mission →');}else if(state==='paused')run();}
+  function run(){if(state==='over')return runSession.cup?ArcadeCup.render():reset(true);runSession.start('mars');if(state==='ready')startWave();state='running';last=0;$('#game-overlay').hidden=true;hud();}
+  function pause(){keys.clear();pointers.clear();drag=null;if(state==='running'){state='paused';runSession.pause();hud();overlay('Orbit on hold.','Take a breather, pilot.','Resume mission →');}else if(state==='paused')run();}
   function damage(){
     if(ship.inv>0||state!=='running')return;
     ship.hp--;ship.inv=1.5;burst(ship.x,ship.y,'#ffbb82');hud();
-    if(ship.hp===0){state='over';keys.clear();pointers.clear();drag=null;hud();overlay('Signal lost.',`Score ${score} · Wave ${wave}. Mars needs another pilot.`,'Launch again →');}
+    if(ship.hp===0){state='over';keys.clear();pointers.clear();drag=null;hud();overlay('Signal lost.',`Score ${score} · Wave ${wave}. Mars needs another pilot.`,runSession.cup?'See Cup standings →':'Launch again →');runSession.finish({score});}
     else message('Hull hit / temporary shield active.');
   }
   function fire(){
@@ -152,14 +157,14 @@ function dodger(){
     fireTimer-=dt;if(fireTimer<=0){fire();fireTimer=.19;}
     if(breakTimer>0){breakTimer-=dt;if(breakTimer<=0){wave++;startWave();}}
     else if(wave%5!==0&&spawned<quota()){
-      spawnTimer-=dt;if(spawnTimer<=0){const rock=spawned%3===2;enemies.push({x:35+Math.random()*570,y:-28,r:rock?21:17,hp:rock?3:2,kind:rock?'rock':'fighter',vy:55+Math.min(wave*7,100),fire:1+Math.random(),phase:Math.random()*6});spawned++;spawnTimer=Math.max(.4,1.1-wave*.04);}
+      spawnTimer-=dt;if(spawnTimer<=0){const rock=spawned%3===2;enemies.push({x:35+runSession.random()*570,y:-28,r:rock?21:17,hp:rock?3:2,kind:rock?'rock':'fighter',vy:55+Math.min(wave*7,100),fire:1+runSession.random(),phase:runSession.random()*6});spawned++;spawnTimer=Math.max(.4,1.1-wave*.04);}
     }
     enemies.forEach(e=>{e.y+=e.vy*dt;e.x=Math.max(e.r,Math.min(640-e.r,e.x+Math.sin(elapsed*2+e.phase)*20*dt));e.fire-=dt;if(e.kind==='fighter'&&e.y>10&&e.y<340&&e.fire<=0){aim(e,130+Math.min(wave*5,65));e.fire=2;}});
     if(boss){boss.time+=dt;boss.y=Math.min(88,boss.y+55*dt);boss.x=320+Math.sin(boss.time*.65)*195;boss.fire-=dt;if(boss.y>35&&boss.fire<=0){[-.36,-.18,0,.18,.36].forEach(a=>aim(boss,155+Math.min(wave*3,60),a));boss.fire=Math.max(.7,1.6-wave*.035);}}
     shots.forEach(b=>{b.y-=460*dt;b.x+=b.vx*dt;if(boss&&hit(b,boss)){b.dead=true;boss.hp--;burst(b.x,b.y,'#8bf0e2');}else {const target=enemies.find(e=>e.hp>0&&hit(b,e));if(target){b.dead=true;target.hp--;burst(b.x,b.y,'#f6c784');}}});
     enemies.filter(e=>e.hp<=0).forEach(e=>{score+=e.kind==='rock'?40:100;kills++;burst(e.x,e.y,'#ff9e69');if(kills%5===0)drop(e.x,e.y,'upgrade');else if(kills%9===0)drop(e.x,e.y,'repair');hud();});
     enemies=enemies.filter(e=>e.hp>0&&e.y<515);
-    if(boss&&boss.hp<=0){score+=1000+wave*100;burst(boss.x,boss.y,'#ffaf78');burst(boss.x-35,boss.y,'#8bf0e2');drop(boss.x,boss.y,'repair');boss=null;hostile=[];hud();}
+    if(boss&&boss.hp<=0){Shelf.record('shooter_boss',{});score+=1000+wave*100;burst(boss.x,boss.y,'#ffaf78');burst(boss.x-35,boss.y,'#8bf0e2');drop(boss.x,boss.y,'repair');boss=null;hostile=[];hud();}
     hostile.forEach(b=>{b.x+=b.vx*dt;b.y+=b.vy*dt;if(hit(b,ship)){b.dead=true;damage();}});
     enemies.forEach(e=>{if(hit(e,ship))damage();});if(boss&&hit(boss,ship))damage();
     if(state==='over')return;
@@ -187,8 +192,8 @@ function dodger(){
     hostile.forEach(b=>{rect('#fa946c',b.x-4,b.y-4,8,8);rect('#ffe2a4',b.x-2,b.y-2,4,4);});
     pickups.forEach(p=>{rect(p.type==='upgrade'?'#80e0d6':'#c4eaa4',p.x-12,p.y-12,24,24);rect('#15283a',p.x-9,p.y-9,18,18);x.fillStyle=p.type==='upgrade'?'#80e0d6':'#c4eaa4';x.font='bold 16px monospace';x.textAlign='center';x.fillText(p.type==='upgrade'?'U':'+',p.x,p.y+5);});
     if(ship.hp>0&&!(ship.inv>0&&Math.floor(elapsed*12)%2)){
-      const a=ship.x,b=ship.y;rect('#f39568',a-5,b+18,10,10+Math.floor(elapsed*16)%3*3);rect('#ffe0a0',a-2,b+18,4,9);
-      rect('#3d7790',a-21,b+3,42,13);rect('#9fced0',a-17,b,8,14);rect('#9fced0',a+9,b,8,14);rect('#cfe4db',a-7,b-17,14,38);rect('#6fbac5',a-4,b-9,8,13);rect('#233b57',a-3,b-7,6,9);rect('#eaa77c',a-3,b-22,6,7);
+      const a=ship.x,b=ship.y,skin=Shelf.palette('ship');rect('#f39568',a-5,b+18,10,10+Math.floor(elapsed*16)%3*3);rect('#ffe0a0',a-2,b+18,4,9);
+      rect('#3d7790',a-21,b+3,42,13);rect(skin.accent,a-17,b,8,14);rect(skin.accent,a+9,b,8,14);rect(skin.main,a-7,b-17,14,38);rect('#6fbac5',a-4,b-9,8,13);rect('#233b57',a-3,b-7,6,9);rect('#eaa77c',a-3,b-22,6,7);
     }
     particles.forEach(p=>rect(p.color,p.x,p.y,3,3));
     for(let row=0;row<480;row+=4)rect('rgba(5,10,23,.10)',0,row,640,1);
@@ -201,12 +206,62 @@ function dodger(){
   document.querySelectorAll('[data-steer]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);if(state==='ready')run();if(state==='running')pointers.set(e.pointerId,b.dataset.steer);};b.onpointerup=b.onpointercancel=b.onlostpointercapture=e=>pointers.delete(e.pointerId);});
   function point(e){const box=c.getBoundingClientRect();return {x:(e.clientX-box.left)*640/box.width,y:(e.clientY-box.top)*480/box.height,id:e.pointerId};}
   c.onpointerdown=e=>{e.preventDefault();if(state==='running'){c.setPointerCapture(e.pointerId);drag=point(e);}};c.onpointermove=e=>{if(drag&&drag.id===e.pointerId)drag=point(e);};c.onpointerup=c.onpointercancel=c.onlostpointercapture=e=>{if(drag&&drag.id===e.pointerId)drag=null;};
-  $('#start-game').onclick=()=>{run();$('#start-game').blur();};$('#pause-game').onclick=()=>{pause();$('#pause-game').blur();};$('#restart-game').onclick=()=>{reset(true);$('#restart-game').blur();};
-  clean=()=>{cancelAnimationFrame(raf);removeEventListener('keydown',keydown);removeEventListener('keyup',keyup);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};
+  $('#start-game').onclick=()=>{$('#start-game').blur();run();};$('#pause-game').onclick=()=>{pause();$('#pause-game').blur();};$('#restart-game').onclick=()=>{reset(true);$('#restart-game').blur();};
+  clean=()=>{runSession.dispose();cancelAnimationFrame(raf);removeEventListener('keydown',keydown);removeEventListener('keyup',keyup);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};
+  runSession.mount(()=>{state='over';keys.clear();pointers.clear();drag=null;hud();overlay('Cup time!',`Score ${score}. Your round is saved.`,'See Cup standings →');runSession.finish({score});});
   reset();raf=requestAnimationFrame(loop);
 }
-function memory(){let icons=['🌙','🌙','🍒','🍒','🪐','🪐','🎲','🎲','🌵','🌵','🎯','🎯','🦋','🦋','🎸','🎸'].sort(()=>Math.random()-.5),open=[],moves=0; shell('Memory Match','Find the eight pairs in as few moves as you can.',`<div class="panel"><div class="stats">MOVES <b id="score">0</b></div><div class="memory">${icons.map((_,i)=>`<button data-i="${i}">?</button>`).join('')}</div><div class="controls"><button onclick="memory()">New game</button></div></div>`);document.querySelectorAll('.memory button').forEach(b=>b.onclick=()=>{let i=+b.dataset.i;if(b.classList.contains('open')||b.classList.contains('done')||open.length===2)return;b.textContent=icons[i];b.classList.add('open');open.push(i);if(open.length===2){moves++;document.querySelector('#score').textContent=moves;let[a,z]=open;if(icons[a]===icons[z]){document.querySelectorAll('.memory button')[a].classList.replace('open','done');document.querySelectorAll('.memory button')[z].classList.replace('open','done');open=[];if(document.querySelectorAll('.done').length===16)setTimeout(()=>alert('You won in '+moves+' moves!'),100)}else setTimeout(()=>{[a,z].forEach(q=>{let e=document.querySelectorAll('.memory button')[q];e.textContent='?';e.classList.remove('open')});open=[]},650)}})}
-function reaction(){let state='ready',start; shell('Reaction Test','Wait for green, then tap as fast as you can.',`<div class="panel"><div class="reaction" id="react">Click to start</div><div class="controls"><button onclick="reaction()">Reset</button></div></div>`);let e=document.querySelector('#react');e.onclick=()=>{if(state==='ready'){state='wait';e.textContent='Wait for green…';e.style.background='#ff5d8f';setTimeout(()=>{state='go';start=performance.now();e.textContent='CLICK!';e.style.background='#67e2b1'},1800+Math.random()*2500)}else if(state==='wait'){e.textContent='Too early — try again.';e.style.background='#e5e8ed';state='ready'}else if(state==='go'){e.textContent=Math.round(performance.now()-start)+' ms — click to go again';e.style.background='#e5e8ed';state='ready'}}}
+function memory(){
+  const runSession=GameRuns.session('memory');
+  const icons=['🌙','🌙','🍒','🍒','🪐','🪐','🎲','🎲','🌵','🌵','🎯','🎯','🦋','🦋','🎸','🎸'];
+  for(let i=icons.length-1;i>0;i--){const j=Math.floor(runSession.random()*(i+1));[icons[i],icons[j]]=[icons[j],icons[i]];}
+  let open=[],moves=0,pairs=0,pending=null,over=false,paused=false;
+  shell('Memory Match','Find the eight pairs in as few moves as you can.',`<div class="panel"><div class="stats">MOVES <b id="score">0</b></div><div class="memory-stage"><div class="memory">${icons.map((_,i)=>`<button data-i="${i}" aria-label="Hidden card ${i+1}">?</button>`).join('')}</div><div class="memory-cover" hidden><h2>Take a breather.</h2><button class="action" id="memory-resume">Resume game</button></div></div><p id="memory-note" role="status">Find your first pair.</p><div class="controls">${runSession.cup?'<button id="memory-pause">Pause</button>':''}<button data-cup-restart onclick="memory()">New game</button></div></div>`);
+  const buttons=[...document.querySelectorAll('.memory button')],note=document.querySelector('#memory-note');
+  buttons.forEach((b,i)=>b.onclick=()=>{
+    if(paused||over||b.classList.contains('open')||b.classList.contains('done')||open.length===2)return;
+    runSession.start('eight-pairs');b.textContent=icons[i];b.setAttribute('aria-label',`Card ${i+1}: ${icons[i]}`);b.classList.add('open');open.push(i);
+    if(open.length!==2)return;
+    moves++;document.querySelector('#score').textContent=moves;
+    const [a,z]=open;
+    if(icons[a]===icons[z]){
+      [a,z].forEach(q=>{buttons[q].classList.replace('open','done');buttons[q].disabled=true;});open=[];pairs++;
+      note.textContent=pairs===8?`You won in ${moves} moves!`:`${pairs} of 8 pairs found.`;
+      runSession.progress({pairs,moves});
+      if(pairs===8){over=true;Shelf.record('memory_win',{moves});runSession.finish({pairs,moves,complete:true});if(runSession.cup)document.querySelector('#memory-pause').disabled=true;}
+    }else{
+      note.textContent='Not a match. Try to remember those cards.';
+      pending=setTimeout(()=>{[a,z].forEach(q=>{buttons[q].textContent='?';buttons[q].classList.remove('open');buttons[q].setAttribute('aria-label',`Hidden card ${q+1}`);});open=[];},650);
+    }
+  });
+  const pause=()=>{if(over)return;paused=!paused;document.querySelector('.memory').style.visibility=paused?'hidden':'';document.querySelector('.memory-cover').hidden=!paused;if(paused)runSession.pause();else runSession.resume();if(runSession.cup)document.querySelector('#memory-pause').textContent=paused?'Resume':'Pause';};
+  const blur=()=>{if(runSession.cup&&!paused&&!over)pause();},visibility=()=>{if(document.hidden)blur();};
+  document.querySelector('#memory-resume').onclick=pause;
+  if(runSession.cup){document.querySelector('#memory-pause').onclick=pause;addEventListener('blur',blur);document.addEventListener('visibilitychange',visibility);}
+  runSession.mount(()=>{over=true;clearTimeout(pending);buttons.forEach(b=>b.disabled=true);note.textContent=`Cup time! ${pairs} pairs found in ${moves} moves.`;document.querySelector('#memory-pause').disabled=true;runSession.finish({pairs,moves,complete:false});});
+  clean=()=>{runSession.dispose();clearTimeout(pending);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};
+}
+
+function reaction(){
+  let state='ready',start=0,pending=null;
+  shell('Reaction Test','Wait for green, then tap as fast as you can.',`<div class="panel"><button class="reaction" id="react">Click to start</button><div class="controls"><button onclick="reaction()">Reset</button></div></div>`);
+  const e=document.querySelector('#react'),runSession=GameRuns.session('reaction');
+  e.onclick=()=>{
+    if(state==='ready'){
+      runSession.reset();runSession.start('signal');state='wait';e.textContent='Wait for green…';e.style.background='#ff5d8f';
+      pending=setTimeout(()=>{state='go';start=performance.now();e.textContent='CLICK!';e.style.background='#67e2b1';},1800+Math.random()*2500);
+    }else if(state==='wait'){
+      clearTimeout(pending);state='ready';e.textContent='Too early — try again.';e.style.background='#e5e8ed';
+    }else if(state==='go'){
+      const ms=Math.round(performance.now()-start);state='ready';e.textContent=`${ms} ms — click to go again`;e.style.background='#e5e8ed';
+      if(ms>0){Shelf.record('reaction_result',{ms});runSession.finish({ms});}
+    }
+  };
+  const blur=()=>{if(state!=='ready'){clearTimeout(pending);state='ready';e.textContent='Round paused — click to try again.';e.style.background='#e5e8ed';}};
+  const visibility=()=>{if(document.hidden)blur();};
+  addEventListener('blur',blur);document.addEventListener('visibilitychange',visibility);
+  clean=()=>{runSession.dispose();clearTimeout(pending);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};
+}
 // Reserve exact matches first, then spend each remaining answer letter once.
 function gradeVault(guess,answer){
   const result=Array(answer.length).fill('absent'),remaining={};
@@ -247,6 +302,7 @@ function word(){
       <div class="vault-bottom"><button id="vault-new">New vault →</button><span id="vault-save-note">Type or tap · Enter to submit · ⌫ to delete</span></div>
       <details class="vault-help"><summary>How to crack the vault</summary><p>Enter a real word of the selected length. You have six attempts. Green letters are in the right place; amber letters belong elsewhere; grey letters have no remaining match. Each repeated letter needs its own match in the answer.</p><p>Each word length has its own saved puzzle and streak. Switching lengths keeps your progress. Starting a new vault after submitting a guess counts an unfinished puzzle as a loss and ends your streak.</p></details>
     </div>`);
+  const runSession=GameRuns.session('word');
   const $=s=>document.querySelector(s),marks={correct:'✓',present:'↔',absent:'×'},labels={correct:'correct position',present:'different position',absent:'no remaining match'};
   function render(){
     const data=profile(size),round=data.round,keyboard={};
@@ -271,8 +327,9 @@ function word(){
     if(draft.length!==size){notice=`Enter ${size} letters before submitting.`;return render();}
     if(!allowed.has(draft)){notice='Word not recognised. Try another English word.';return render();}
     if(round.guesses.includes(draft)){notice='You already tried that code. Try a different word.';return render();}
+    if(!round.challengeDay)round.challengeDay=runSession.start(`word-${size}`)?.day;else runSession.start(`word-${size}`,round.challengeDay);
     round.guesses.push(draft);flash=round.guesses.length-1;
-    if(draft===round.answer){round.status='won';data.wins++;data.played++;data.streak++;data.best=Math.max(data.best,data.streak);}
+    if(draft===round.answer){round.status='won';Shelf.record('word_win',{guesses:round.guesses.length});runSession.finish({guesses:round.guesses.length,complete:true});data.wins++;data.played++;data.streak++;data.best=Math.max(data.best,data.streak);}
     else if(round.guesses.length===6){round.status='lost';data.played++;data.streak=0;}
     draft='';notice='';busy=true;save();render();
     timer=setTimeout(()=>{busy=false;flash=-1;render();},size*100+300);
@@ -288,9 +345,9 @@ function word(){
   const keydown=e=>{if(e.ctrlKey||e.metaKey||e.altKey||e.target.closest('select,input,textarea,summary'))return;if(e.target.closest('button')&&(e.key==='Enter'||e.key===' '))return;const k=e.key.length===1?e.key.toUpperCase():e.key;if(/^[A-Z]$/.test(k)||['Enter','Backspace'].includes(k)){e.preventDefault();if(!e.repeat||k==='Backspace')input(k);}};
   addEventListener('keydown',keydown);
   $('#vault-keyboard').onclick=e=>{const b=e.target.closest('[data-key]');if(b&&!b.disabled)input(b.dataset.key);};
-  $('#vault-size').onchange=e=>{size=+e.target.value;draft='';notice='';flash=-1;save();render();e.target.blur();};
-  $('#vault-new').onclick=e=>{const data=profile(size);if(data.round.status==='playing'&&data.round.guesses.length){data.played++;data.streak=0;}data.round=fresh(data.round.answer);draft='';notice='';flash=-1;save();render();e.target.blur();};
-  clean=()=>{clearTimeout(timer);removeEventListener('keydown',keydown);};save();render();
+  $('#vault-size').onchange=e=>{runSession.reset();size=+e.target.value;draft='';notice='';flash=-1;save();render();e.target.blur();};
+  $('#vault-new').onclick=e=>{runSession.reset();const data=profile(size);if(data.round.status==='playing'&&data.round.guesses.length){data.played++;data.streak=0;}data.round=fresh(data.round.answer);draft='';notice='';flash=-1;save();render();e.target.blur();};
+  clean=()=>{runSession.dispose();clearTimeout(timer);removeEventListener('keydown',keydown);};save();render();
 }
 function checkers(){
   let b=Array(64).fill(0),sel=null,turn='red',level='medium',note='Your turn',over=false,mustCapture=null,pending=null;
@@ -325,14 +382,14 @@ function checkers(){
 
   let render=()=>{
     let targets=(!over&&sel!==null)?legalMovesFor(sel).map(m=>m.to):[];
-    shell('Checkers','Capture every opposing piece. Pick how tactical the computer should be.',`<div class="difficulty">${['easy','medium','hard'].map(x=>`<button class="choice ${x===level?'active':''}" data-lvl="${x}">${x}</button>`).join('')}</div><div class="stats">${note}</div><div class="checkers">${b.map((p,i)=>`<button class="square ${(i+(i>>3))%2?'dark':''}${i===sel?' selected':''}${targets.includes(i)?' move':''}" data-i="${i}">${p?`<span class="piece ${p[0]==='r'?'red':''}${p.endsWith('K')?' king':''}"></span>`:''}</button>`).join('')}</div><div class="controls"><button onclick="checkers()">New game</button></div>`);
-    document.querySelectorAll('[data-lvl]').forEach(x=>x.onclick=()=>{level=x.dataset.lvl;render()});
+    shell('Checkers','Capture every opposing piece. Pick how tactical the computer should be.',`<div class="difficulty">${['easy','medium','hard'].map(x=>`<button class="choice ${x===level?'active':''}" data-lvl="${x}" ${turn==='black'&&!over?'disabled':''}>${x}</button>`).join('')}</div><div class="stats">${note}</div><div class="checkers">${b.map((p,i)=>`<button class="square ${(i+(i>>3))%2?'dark':''}${i===sel?' selected':''}${targets.includes(i)?' move':''}" data-i="${i}">${p?`<span class="piece ${p[0]==='r'?'red':''}${p.endsWith('K')?' king':''}"></span>`:''}</button>`).join('')}</div><div class="controls"><button onclick="checkers()">New game</button></div>`);
+    document.querySelectorAll('[data-lvl]').forEach(x=>x.onclick=()=>{if(turn==='black'&&!over)return;level=x.dataset.lvl;render()});
     document.querySelectorAll('.square').forEach(x=>x.onclick=()=>click(+x.dataset.i));
     clean=()=>clearTimeout(pending);
   };
 
   let advanceToBot=()=>{
-    if(allMoves('b').length===0){note='You win! The bot has no moves left.';over=true;return render()}
+    if(allMoves('b').length===0){note='You win! The bot has no moves left.';over=true;Shelf.record('checkers_win',{});return render()}
     turn='black';note='Bot is thinking…';render();
     pending=setTimeout(()=>botStep(null),300);
   };
@@ -483,7 +540,7 @@ function trade(){
     if(stage!=='playing'||turnPhase!=='moved')return;
     let p=players[current],tile=board[p.pos];
     if(!p.human||tile.type!=='property'||tile.owner!=null||p.cash<tile.price)return;
-    p.cash-=tile.price;tile.owner=p.id;
+    p.cash-=tile.price;tile.owner=p.id;Shelf.record('trade_properties',{count:board.filter(t=>t.type==='property'&&t.owner===p.id).length});
     addLog(`${p.name} bought ${tile.name} for $${tile.price}.`);
     render();
   }
@@ -608,8 +665,8 @@ function trade(){
   }
   render();
 }
-function clicker(){let coins=0,power=1,cost=15;let render=()=>{shell('Clicker Adventure','Tap the coin, buy a better tap, and watch your pile grow.',`<div class="panel"><div class="stats">COINS <b>${coins}</b> · TAP POWER <b>${power}</b></div><button id="coin" style="font-size:100px;border:0;background:transparent">🪙</button><div class="controls"><button id="upgrade">Upgrade tap — ${cost} coins</button><button onclick="clicker()">New game</button></div></div>`);document.querySelector('#coin').onclick=()=>{coins+=power;render()};document.querySelector('#upgrade').onclick=()=>{if(coins>=cost){coins-=cost;power++;cost=Math.ceil(cost*1.8);render()}}};render()}
-function tic(){let b=Array(9).fill(''),note='Your turn',wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]],won=()=>wins.find(x=>x.every(i=>b[i]&&b[i]===b[x[0]]));let render=()=>{shell('Tic-Tac-Toe','You are X. Can you beat the computer?',`<div class="panel"><div class="stats">${note}</div><div class="memory" style="grid-template-columns:repeat(3,1fr);max-width:300px">${b.map((x,i)=>`<button data-t="${i}" style="height:92px">${x}</button>`).join('')}</div><div class="controls"><button onclick="tic()">New game</button></div></div>`);document.querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>move(+x.dataset.t))};let move=i=>{if(b[i]||won())return;b[i]='X';if(won()){note='You win!';return render()}if(b.every(Boolean)){note='Draw.';return render()}let open=b.map((x,i)=>x?'':i).filter(x=>x!==''),pick=open.find(i=>{b[i]='O';let yes=!!won();b[i]='';return yes})??open[Math.floor(Math.random()*open.length)];b[pick]='O';note=won()?'Computer wins.':'Your turn';render()};render()}
+function clicker(){let coins=0,power=1,cost=15;let render=()=>{shell('Clicker Adventure','Tap the coin, buy a better tap, and watch your pile grow.',`<div class="panel"><div class="stats">COINS <b>${coins}</b> · TAP POWER <b>${power}</b></div><button id="coin" style="font-size:100px;border:0;background:transparent">🪙</button><div class="controls"><button id="upgrade">Upgrade tap — ${cost} coins</button><button onclick="clicker()">New game</button></div></div>`);document.querySelector('#coin').onclick=()=>{coins+=power;render()};document.querySelector('#upgrade').onclick=()=>{if(coins>=cost){coins-=cost;power++;Shelf.record('clicker_power',{power});cost=Math.ceil(cost*1.8);render()}}};render()}
+function tic(){let b=Array(9).fill(''),note='Your turn',wins=[[0,1,2],[3,4,5],[6,7,8],[0,3,6],[1,4,7],[2,5,8],[0,4,8],[2,4,6]],won=()=>wins.find(x=>x.every(i=>b[i]&&b[i]===b[x[0]]));let render=()=>{shell('Tic-Tac-Toe','You are X. Can you beat the computer?',`<div class="panel"><div class="stats">${note}</div><div class="memory" style="grid-template-columns:repeat(3,1fr);max-width:300px">${b.map((x,i)=>`<button data-t="${i}" style="height:92px">${x}</button>`).join('')}</div><div class="controls"><button onclick="tic()">New game</button></div></div>`);document.querySelectorAll('[data-t]').forEach(x=>x.onclick=()=>move(+x.dataset.t))};let move=i=>{if(b[i]||won())return;b[i]='X';if(won()){note='You win!';Shelf.record('tic_win',{});return render()}if(b.every(Boolean)){note='Draw.';return render()}let open=b.map((x,i)=>x?'':i).filter(x=>x!==''),pick=open.find(i=>{b[i]='O';let yes=!!won();b[i]='';return yes})??open[Math.floor(Math.random()*open.length)];b[pick]='O';note=won()?'Computer wins.':'Your turn';render()};render()}
 function flappy(){
   shell('Sky Flyer','A sunset, a little prop plane, and a sky full of close calls.',`
     <div class="panel arcade-panel flyer-panel"><div class="arcade-banner"><span>SKY PATROL / 1986</span><span>02 / FLYER</span></div>
@@ -622,6 +679,7 @@ function flappy(){
       <p class="arcade-footnote">Tap W to climb / hold S to dive · P to pause · clear a gate to score</p>
     </div>`);
   const $=s=>document.querySelector(s),c=$('canvas'),x=c.getContext('2d');x.imageSmoothingEnabled=false;
+  const runSession=GameRuns.session('flappy');
   const keys=new Set(),touch=new Set();let y=200,v=0,pipes=[],score=0,state='ready',frame=0,last=0,elapsed=0,spawn=0,raf;
   const skies=[
     {name:'Sunset Run',sky:['#292544','#493458','#754466','#ab5b70','#db817a','#f3af88'],sun:'#fbd7a0',far:'#665171',near:'#393955',cloud:'#dc96a1',tower:'#3f6171',light:'#729195',cap:'#e6b76f',effect:'clouds'},
@@ -677,16 +735,17 @@ function flappy(){
       }
     });
     rect('#202a3f',0,388,640,12);for(let i=0;i<25;i++)rect('#567375',i*28-(elapsed*75)%28,388,16,3);
-    // Original pixel-art prop plane; the collision box matches its silhouette.
-    rect('#fff0c2',111,y-3,8,4);rect('#dd765b',106,y-8,9,15);rect('#f3bd70',114,y-5,31,12);rect('#fff0bd',118,y-7,20,5);rect('#9f4b55',119,y+7,13,3);
-    rect('#25394f',126,y-11,12,5);rect('#a4d7d0',128,y-10,8,4);rect('#e8845c',121,y+2,9,11);rect('#ffdc98',130,y+2,13,4);
+    // Original pixel-art prop plane; cosmetics never change the collision box.
+    const skin=Shelf.palette('plane');
+    rect('#fff0c2',111,y-3,8,4);rect(skin.accent,106,y-8,9,15);rect(skin.main,114,y-5,31,12);rect('#fff0bd',118,y-7,20,5);rect('#9f4b55',119,y+7,13,3);
+    rect('#25394f',126,y-11,12,5);rect('#a4d7d0',128,y-10,8,4);rect(skin.accent,121,y+2,9,11);rect('#ffdc98',130,y+2,13,4);
     rect('#e4e1c4',147,y-(frame%12<6?11:5),3,frame%12<6?22:10);rect('#302c47',144,y-2,5,5);
     for(let row=0;row<400;row+=4)rect('rgba(20,20,40,.08)',0,row,640,1);
   }
-  function reset(start=false){y=200;v=0;pipes=[];score=0;elapsed=0;spawn=0;frame=0;keys.clear();touch.clear();state='ready';hud();draw();overlay('Chase the horizon.','Tap W to climb. Hold S to dive. Keep tapping to stay airborne. New level every 10 gates.','Take off →');if(start)run();}
-  function run(){if(state==='over')return reset(true);state='running';last=0;$('#game-overlay').hidden=true;hud();}
-  function pause(){keys.clear();touch.clear();if(state==='running'){state='paused';hud();overlay('Holding pattern.','Take a break. The sunset can wait.','Resume flight →');}else if(state==='paused')run();}
-  function crash(){state='over';keys.clear();touch.clear();hud();overlay('Flight complete.',`${score} gates cleared. Ready for another run?`,'Fly again →');}
+  function reset(start=false){runSession.reset();y=200;v=0;pipes=[];score=0;elapsed=0;spawn=0;frame=0;keys.clear();touch.clear();state='ready';hud();draw();overlay('Chase the horizon.','Tap W to climb. Hold S to dive. Keep tapping to stay airborne. New level every 10 gates.','Take off →');if(start)run();}
+  function run(){if(state==='over')return runSession.cup?ArcadeCup.render():reset(true);runSession.start('sky');state='running';last=0;$('#game-overlay').hidden=true;hud();}
+  function pause(){keys.clear();touch.clear();if(state==='running'){state='paused';runSession.pause();hud();overlay('Holding pattern.','Take a break. The sunset can wait.','Resume flight →');}else if(state==='paused')run();}
+  function crash(){if(state==='over')return;state='over';keys.clear();touch.clear();hud();overlay('Flight complete.',`${score} gates cleared. Ready for another run?`,runSession.cup?'See Cup standings →':'Fly again →');runSession.finish({score});}
   function update(dt){
     elapsed+=dt;frame++;const down=keys.has('s')||touch.has('s');
     // Gravity always acts; a fresh W press supplies one upward impulse.
@@ -696,19 +755,40 @@ function flappy(){
       // Queue each gate with its own level's gap; existing gates never resize.
       const gateLevel=Math.floor((score+pipes.filter(p=>!p.passed).length)/10)+1;
       const gap=difficulty(gateLevel).gap;
-      pipes.push({x:660,g:55+Math.random()*145,gap,passed:false});spawn=1.9;
+      pipes.push({x:660,g:55+runSession.random()*145,gap,passed:false});spawn=1.9;
     }
     pipes.forEach(p=>p.x-=speed*dt);
     if(y-11<0||y+13>388||pipes.some(p=>p.x-4<150&&p.x+50>106&&(y-11<p.g||y+13>p.g+p.gap)))return crash();
-    pipes.forEach(p=>{if(!p.passed&&p.x+50<106){p.passed=true;score++;hud();}});pipes=pipes.filter(p=>p.x>-60);
+    pipes.forEach(p=>{if(!p.passed&&p.x+50<106){p.passed=true;score++;Shelf.record('flyer_score',{score});runSession.progress({score});hud();}});pipes=pipes.filter(p=>p.x>-60);
   }
   function loop(now){const dt=last?Math.min((now-last)/1000,.035):0;last=now;if(state==='running'){update(dt);draw();}raf=requestAnimationFrame(loop);}
   const keydown=e=>{if(e.target.closest('button,select,input,textarea')||e.ctrlKey||e.metaKey||e.altKey)return;const k=e.key.toLowerCase();if(!['w','s','p'].includes(k))return;e.preventDefault();if(k==='p'){if(!e.repeat)pause();return;}if(e.repeat)return;if(state==='ready')run();if(state==='running'){if(k==='w'&&!keys.has(k))v=-260;keys.add(k);}};
   const keyup=e=>keys.delete(e.key.toLowerCase());const blur=()=>{keys.clear();touch.clear();if(state==='running')pause();};const visibility=()=>{if(document.hidden)blur();};
   addEventListener('keydown',keydown);addEventListener('keyup',keyup);addEventListener('blur',blur);document.addEventListener('visibilitychange',visibility);
   document.querySelectorAll('[data-flight]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);if(state==='ready')run();if(state==='running'){if(b.dataset.flight==='w')v=-260;touch.add(b.dataset.flight);}};b.onpointerup=b.onpointercancel=b.onlostpointercapture=()=>touch.delete(b.dataset.flight);});
-  $('#start-game').onclick=()=>{run();$('#start-game').blur();};$('#restart-game').onclick=()=>{reset(true);$('#restart-game').blur();};$('#pause-game').onclick=()=>{pause();$('#pause-game').blur();};
-  clean=()=>{cancelAnimationFrame(raf);removeEventListener('keydown',keydown);removeEventListener('keyup',keyup);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};reset();raf=requestAnimationFrame(loop);
+  $('#start-game').onclick=()=>{$('#start-game').blur();run();};$('#restart-game').onclick=()=>{reset(true);$('#restart-game').blur();};$('#pause-game').onclick=()=>{pause();$('#pause-game').blur();};
+  runSession.mount(()=>crash());
+  clean=()=>{runSession.dispose();cancelAnimationFrame(raf);removeEventListener('keydown',keydown);removeEventListener('keyup',keyup);removeEventListener('blur',blur);document.removeEventListener('visibilitychange',visibility);};reset();raf=requestAnimationFrame(loop);
 }
-function platform(){shell('Mini Platformer','Use left/right and Space. Reach the flag at the far side.',`<div class="panel"><canvas class="canvas" width="480" height="300"></canvas><div class="controls"><button data-p="left">←</button><button data-p="jump">Jump</button><button data-p="right">→</button><button onclick="platform()">Restart</button></div></div>`);let c=document.querySelector('canvas'),x=c.getContext('2d'),px=25,y=230,v=0,key={};let down=e=>key[e.key||e.target.dataset.p]=true,up=e=>key[e.key||e.target.dataset.p]=false;addEventListener('keydown',down);addEventListener('keyup',up);document.querySelectorAll('[data-p]').forEach(q=>{q.onpointerdown=down;q.onpointerup=up});let loop=setInterval(()=>{if(key.ArrowLeft||key.left)px-=4;if(key.ArrowRight||key.right)px+=4;if((key[' ']||key.jump)&&y>=230)v=-10;v+=.55;y=Math.min(230,y+v);px=Math.max(0,px);if(px>435){clearInterval(loop);alert('Level complete!')}x.fillStyle='#bdefff';x.fillRect(0,0,480,300);x.fillStyle='#67e2b1';x.fillRect(0,260,480,40);x.fillStyle='#ff5d8f';x.fillRect(450,195,5,65);x.fillStyle='#ffd65c';x.fillRect(455,195,20,14);x.fillStyle='#172036';x.fillRect(px,y,22,30)},16);clean=()=>{clearInterval(loop);removeEventListener('keydown',down);removeEventListener('keyup',up)}}
+function platform(){
+  shell('Mini Platformer','Use left/right and Space. Reach the flag at the far side.',`<div class="panel"><canvas class="canvas" width="480" height="300" aria-label="Platformer: move right to reach the flag"></canvas><p id="platform-note" role="status">The flag is just ahead.</p><div class="controls"><button data-p="left" aria-label="Move left">←</button><button data-p="jump">Jump</button><button data-p="right" aria-label="Move right">→</button><button onclick="platform()">Restart</button></div></div>`);
+  const c=document.querySelector('canvas'),x=c.getContext('2d'),key=new Set(),pointers=new Map();let px=25,y=230,v=0,over=false;
+  const control=k=>({'ArrowLeft':'left','ArrowRight':'right',' ':'jump'}[k]);
+  const down=e=>{const k=control(e.key);if(!k||e.ctrlKey||e.metaKey||e.altKey||e.target.closest('button,input,select,textarea'))return;e.preventDefault();key.add(k);};
+  const up=e=>key.delete(control(e.key));
+  const release=()=>{key.clear();pointers.clear();};
+  const visibility=()=>{if(document.hidden)release();};
+  addEventListener('keydown',down);addEventListener('keyup',up);addEventListener('blur',release);document.addEventListener('visibilitychange',visibility);
+  document.querySelectorAll('[data-p]').forEach(b=>{b.onpointerdown=e=>{e.preventDefault();b.setPointerCapture(e.pointerId);pointers.set(e.pointerId,b.dataset.p);};b.onpointerup=b.onpointercancel=b.onlostpointercapture=e=>pointers.delete(e.pointerId);});
+  const held=k=>key.has(k)||[...pointers.values()].includes(k);
+  const draw=()=>{x.fillStyle='#bdefff';x.fillRect(0,0,480,300);x.fillStyle='#67e2b1';x.fillRect(0,260,480,40);x.fillStyle='#ff5d8f';x.fillRect(450,195,5,65);x.fillStyle='#ffd65c';x.fillRect(455,195,20,14);x.fillStyle='#172036';x.fillRect(px,y,22,30);};
+  const loop=setInterval(()=>{
+    if(over)return;
+    if(held('left'))px-=4;if(held('right'))px+=4;if(held('jump')&&y>=230)v=-10;
+    v+=.55;y=Math.min(230,y+v);px=Math.max(0,Math.min(448,px));draw();
+    if(px>435){over=true;clearInterval(loop);release();document.querySelector('#platform-note').textContent='Level complete! You reached the flag.';Shelf.record('platform_win',{});}
+  },16);
+  clean=()=>{clearInterval(loop);release();removeEventListener('keydown',down);removeEventListener('keyup',up);removeEventListener('blur',release);document.removeEventListener('visibilitychange',visibility);};draw();
+}
+
 home();

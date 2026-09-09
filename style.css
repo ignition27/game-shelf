@@ -56,6 +56,15 @@
 
 .flight-level{display:flex;justify-content:space-between;gap:8px;margin:0 0 14px;font:11px 'DM Mono',monospace;color:#f2ce9b}.flight-level span:last-child{opacity:.7;text-align:right}@media(max-width:520px){.flight-level{font-size:9px;line-height:1.5}.flight-level span{max-width:55%}}
 
+/* Keep the expanded shelf navigation usable on narrow screens. */
+button:focus-visible,a:focus-visible,input:focus-visible{outline:3px solid #986017;outline-offset:3px}
+.reaction{width:100%;border:0;font:700 25px 'Space Grotesk',sans-serif;padding:20px}
+.difficulty button:disabled{cursor:default;opacity:.55}
+[data-p]{touch-action:none;user-select:none}
+@media(max-width:760px){header{height:auto;min-height:72px;flex-wrap:wrap;padding-top:12px;padding-bottom:12px;gap:8px 20px}.tag{display:none}nav{flex-wrap:wrap}nav button{min-height:40px}}
+@media(max-width:420px){header{position:static;gap:4px}nav{width:100%;justify-content:space-between}nav button{padding:8px 6px;font-size:12px}.grid{grid-template-columns:minmax(0,1fr)}main{padding:24px 18px}.game-head .back{flex-shrink:0}}
+@media(prefers-reduced-motion:reduce){.car-track,.card{transition:none}}
+
 .shooter-panel{background:#142033;border-color:#0b1324;box-shadow:6px 6px 0 #0b1324;color:#d9c6ad}.shooter-panel .arcade-stage{max-width:646px;border-color:#090f1d;border-radius:3px}.shooter-panel .arcade-overlay{background:rgba(12,23,40,.78)}.shooter-panel .arcade-overlay h2{font:700 clamp(28px,5vw,48px)/1.05 'DM Mono',monospace;text-transform:uppercase;text-shadow:3px 3px #854c4c}.shooter-panel .kicker{color:#83d3cc}.shooter-panel .action{background:#dfaa83;color:#142033;border-color:#dfaa83;border-radius:2px}.shooter-panel .controls button{background:#203248;color:#bcddd7;border-color:#456075;border-radius:3px;font:12px 'DM Mono',monospace;touch-action:none;user-select:none}.shooter-panel .controls button:hover{background:#30485d}.shooter-panel .arcade-stats b{color:#e9b28a}.shooter-status{display:flex;justify-content:space-between;gap:8px;font:11px 'DM Mono',monospace;margin-bottom:14px;color:#8bd7ce}.shooter-message{font:11px/1.5 'DM Mono',monospace;text-align:center;min-height:33px;margin:12px 0 0;color:#d8b999}@media(max-width:520px){.shooter-status{font-size:9px;gap:4px}.shooter-panel .arcade-overlay h2{font-size:25px;letter-spacing:-1px}.shooter-panel .arcade-overlay .kicker{display:none}.shooter-panel .arcade-overlay p{font-size:11px}.shooter-message{font-size:10px}}
 
 /* Word Vault: a warm phosphor terminal. */
